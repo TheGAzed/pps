@@ -1,6 +1,5 @@
 package org.example;
 
-import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 
@@ -12,21 +11,18 @@ public class EncryptThread extends CipherThread {
     @Override
     public void run() {
         try {
-            Cipher encrypt = Cipher.getInstance("AES/ECB/NoPadding");
-            encrypt.init(Cipher.ENCRYPT_MODE, key);
-
+            byte[] plainByte = ByteBuffer.allocate(BYTES).array();
             for (int i = counterStart; i < counterEnd; i++) {
-                byte[] encryptByte = encrypt.doFinal(combine(i));
+                byte[] encryptByte = cipher.doFinal(combine(i));
 
                 int start = i * BYTES;
-                byte[] plainByte = ByteBuffer.allocate(BYTES).array();
                 System.arraycopy(plaintext, start, plainByte, 0, plainByte.length);
 
                 byte[] cipherByte = this.exclusiveOr(plainByte, encryptByte);
                 System.arraycopy(cipherByte, 0, ciphertext, start, cipherByte.length);
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
         }
     }
 }

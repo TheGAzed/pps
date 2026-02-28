@@ -9,7 +9,8 @@ import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 
 public class Main {
-    private final int THREAD_COUNT = 4;
+    private final int THREAD_COUNT = 2;
+    private final int CEILING = THREAD_COUNT * CipherThread.BYTES;
 
     private byte[] inputBuffer;
     private byte[] encryptBuffer;
@@ -26,17 +27,18 @@ public class Main {
         SecureRandom random = new SecureRandom();
         random.nextBytes(nonce);
 
-        File inputFile = new File("input.txt");
+        File inputFile = new File("src/main/resources/input.bmp");
 
-        int ceil = (((int)inputFile.length() + (CipherThread.BYTES - 1)) / CipherThread.BYTES) * CipherThread.BYTES;
+        int length = (int)inputFile.length();
+        int ceil = ((length + (CEILING - 1)) / CEILING) * CEILING;
         inputBuffer = ByteBuffer.allocate(ceil).array();
         encryptBuffer = new byte[inputBuffer.length];
         decryptBuffer = new byte[inputBuffer.length];
 
-        File encryptFile = new File("encrypt.txt");
+        File encryptFile = new File("src/main/resources/encrypt.bmp");
         boolean ignoredEncrypt = encryptFile.createNewFile();
 
-        File decryptFile = new File("decrypt.txt");
+        File decryptFile = new File("src/main/resources/decrypt.bmp");
         boolean ignoredDecrypt = decryptFile.createNewFile();
 
         try (
@@ -47,28 +49,19 @@ public class Main {
             inputStream.readNBytes(inputBuffer, 0, inputBuffer.length);
 
             this.encrypt();
-            this.decrypt();
+            encryptStream.write(encryptBuffer, 0, length);
 
-            encryptStream.write(encryptBuffer);
-            decryptStream.write(decryptBuffer);
+            this.decrypt();
+            decryptStream.write(decryptBuffer, 0, length);
         } catch (Exception e) {
             throw new Exception(e);
         }
     }
 
     void encrypt() throws InterruptedException {
-        if (inputBuffer.length < CipherThread.BYTES * THREAD_COUNT) {
-            int blockCount = inputBuffer.length / CipherThread.BYTES;
-
-            EncryptThread thread = new EncryptThread(key, nonce, 0, blockCount, inputBuffer, encryptBuffer);
-            thread.start();
-            thread.join();
-            return;
-        }
-
         EncryptThread[] threads = new EncryptThread[THREAD_COUNT];
         for (int i = 0; i < THREAD_COUNT; i++) {
-            int count = (inputBuffer.length / THREAD_COUNT) / CipherThread.BYTES;
+            int count = inputBuffer.length / CEILING;
             int counterStart = i * count;
 
             threads[i] = new EncryptThread(key, nonce, counterStart, counterStart + count, inputBuffer, encryptBuffer);
@@ -81,21 +74,12 @@ public class Main {
     }
 
     void decrypt() throws InterruptedException {
-        if (encryptBuffer.length < CipherThread.BYTES * THREAD_COUNT) {
-            int blockCount = inputBuffer.length / CipherThread.BYTES;
-
-            DecryptThread thread = new DecryptThread(key, nonce, 0, blockCount, decryptBuffer,  encryptBuffer);
-            thread.start();
-            thread.join();
-            return;
-        }
-
         DecryptThread[] threads = new DecryptThread[THREAD_COUNT];
         for (int i = 0; i < THREAD_COUNT; i++) {
-            int count = (inputBuffer.length / THREAD_COUNT) / CipherThread.BYTES;
+            int count = inputBuffer.length / CEILING;
             int counterStart = i * count;
 
-            threads[i] = new DecryptThread(key, nonce, counterStart, counterStart + count, decryptBuffer,  encryptBuffer);
+            threads[i] = new DecryptThread(key, nonce, counterStart, counterStart + count, decryptBuffer, encryptBuffer);
             threads[i].start();
         }
 

@@ -1,5 +1,6 @@
 package org.example;
 
+import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import java.nio.ByteBuffer;
 
@@ -12,6 +13,7 @@ public abstract class CipherThread extends Thread {
     protected byte[] plaintext;
     protected final byte[] nonce;
     protected final SecretKey key;
+    protected final Cipher cipher;
 
     public CipherThread(SecretKey key, byte[] nonce, int counterStart, int counterEnd, byte[] plaintext, byte[] ciphertext) {
         this.nonce = nonce;
@@ -22,6 +24,13 @@ public abstract class CipherThread extends Thread {
 
         this.plaintext = plaintext;
         this.ciphertext = ciphertext;
+
+        try {
+            this.cipher = Cipher.getInstance("AES/ECB/NoPadding");
+            this.cipher.init(Cipher.ENCRYPT_MODE, key);
+        } catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
     }
 
     protected byte[] exclusiveOr(byte[] one, byte[] two) {
