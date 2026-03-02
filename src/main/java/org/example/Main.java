@@ -39,7 +39,7 @@ public class Main {
         SecureRandom random = new SecureRandom();
         random.nextBytes(nonce);
 
-        File inputFile = new File(FILEPATH + "/input.mp4");
+        File inputFile = new File(FILEPATH + "/input.bmp");
 
         int length = (int)inputFile.length();
         int ceil = ((length + (CEILING - 1)) / CEILING) * CEILING;
@@ -52,10 +52,10 @@ public class Main {
         encryptBuffer[0] = ByteBuffer.allocate(ceil);
         decryptBuffer[0] = ByteBuffer.allocate(ceil);
 
-        File encryptFile = new File(FILEPATH + "/encrypt.mp4");
+        File encryptFile = new File(FILEPATH + "/encrypt.bmp");
         boolean ignoredEncrypt = encryptFile.createNewFile();
 
-        File decryptFile = new File(FILEPATH + "/decrypt.mp4");
+        File decryptFile = new File(FILEPATH + "/decrypt.bmp");
         boolean ignoredDecrypt = decryptFile.createNewFile();
 
         try (
@@ -85,7 +85,7 @@ public class Main {
         SecureRandom random = new SecureRandom();
         random.nextBytes(nonce);
 
-        File inputFile = new File(FILEPATH + "/input.mp4");
+        File inputFile = new File(FILEPATH + "/input.bmp");
 
         int length = (int)inputFile.length();
         int ceil = ((length + (CEILING - 1)) / CEILING) * CEILING;
@@ -100,10 +100,10 @@ public class Main {
             decryptBuffer[i] = ByteBuffer.allocate(partial);
         }
 
-        File encryptFile = new File(FILEPATH + "/encrypt.mp4");
+        File encryptFile = new File(FILEPATH + "/encrypt.bmp");
         boolean ignoredEncrypt = encryptFile.createNewFile();
 
-        File decryptFile = new File(FILEPATH + "/decrypt.mp4");
+        File decryptFile = new File(FILEPATH + "/decrypt.bmp");
         boolean ignoredDecrypt = decryptFile.createNewFile();
 
         try (
