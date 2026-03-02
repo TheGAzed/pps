@@ -1,11 +1,10 @@
-package org.example;
+package org.example.parallel;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import java.nio.ByteBuffer;
 
 public abstract class CipherThread extends Thread {
-    protected static final int BYTES = 16;
+    public static final int BYTES = 16;
 
     protected final int counterStart;
     protected final int counterEnd;
@@ -36,7 +35,7 @@ public abstract class CipherThread extends Thread {
     protected byte[] exclusiveOr(byte[] one, byte[] two) {
         if (one.length != two.length) { throw new IllegalArgumentException(); }
 
-        byte[] result = new byte[one.length];
+        byte[] result = new byte[BYTES];
         for (int i = 0; i < one.length; i++) {
             result[i] = (byte) (one[i] ^ two[i]);
         }
@@ -45,7 +44,7 @@ public abstract class CipherThread extends Thread {
     }
 
     protected byte[] combine(int counter) {
-        byte[] combineByte = ByteBuffer.allocate(BYTES).array();
+        byte[] combineByte = new byte[BYTES];
         System.arraycopy(nonce, 0, combineByte, 0, Math.min(nonce.length, 12));
         combineByte[12] = (byte)(counter >> 24);
         combineByte[13] = (byte)(counter >> 16);

@@ -1,21 +1,19 @@
-package org.example;
+package org.example.sequential;
 
 import javax.crypto.SecretKey;
-import java.nio.ByteBuffer;
 
-public class EncryptThread extends CipherThread {
-    public EncryptThread(SecretKey key, byte[] nonce, int counterStart, int counterEnd, byte[] plaintext, byte[] ciphertext) {
+public class EncryptSequence extends CipherSequence {
+    public EncryptSequence(SecretKey key, byte[] nonce, int counterStart, int counterEnd, byte[] plaintext, byte[] ciphertext) {
         super(key, nonce, counterStart, counterEnd, plaintext, ciphertext);
     }
 
-    @Override
     public void run() {
         try {
-            byte[] plainByte = ByteBuffer.allocate(BYTES).array();
-            for (int i = counterStart; i < counterEnd; i++) {
+            byte[] plainByte = new byte[BYTES];
+            for (int i = counterStart, index = 0; i < counterEnd; i++, index++) {
                 byte[] encryptByte = cipher.doFinal(combine(i));
 
-                int start = i * BYTES;
+                int start = index * BYTES;
                 System.arraycopy(plaintext, start, plainByte, 0, plainByte.length);
 
                 byte[] cipherByte = this.exclusiveOr(plainByte, encryptByte);
