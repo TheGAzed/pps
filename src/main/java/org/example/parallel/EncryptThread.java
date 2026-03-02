@@ -12,12 +12,16 @@ public class EncryptThread extends CipherThread {
         try {
             byte[] plainByte = new byte[BYTES];
             for (int i = counterStart, index = 0; i < counterEnd; i++, index++) {
+                // encipher (nonce + counter) combination with key
                 byte[] encryptByte = cipher.doFinal(combine(i));
 
+                // copy cipher text into cipher bytes array
                 int start = index * BYTES;
                 System.arraycopy(plaintext, start, plainByte, 0, plainByte.length);
 
+                // XOR cipher and bytes with encrypted bytes chunk
                 byte[] cipherByte = this.exclusiveOr(plainByte, encryptByte);
+                // copy plain bytes array into plain text
                 System.arraycopy(cipherByte, 0, ciphertext, start, cipherByte.length);
             }
         } catch (Exception exception) {

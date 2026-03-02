@@ -23,6 +23,7 @@ public class CipherSequence {
         this.plaintext = plaintext;
         this.ciphertext = ciphertext;
 
+        // initialize key cipher
         try {
             this.cipher = javax.crypto.Cipher.getInstance("AES/ECB/NoPadding");
             this.cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, key);
@@ -32,6 +33,7 @@ public class CipherSequence {
     }
 
     protected byte[] exclusiveOr(byte[] one, byte[] two) {
+        // exclusive or two byte arrays and return result
         if (one.length != two.length) { throw new IllegalArgumentException(); }
 
         byte[] result = new byte[BYTES];
@@ -43,6 +45,7 @@ public class CipherSequence {
     }
 
     protected byte[] combine(int counter) {
+        // create nonce + counter combination for AES with CTR
         byte[] combineByte = new byte[BYTES];
         System.arraycopy(nonce, 0, combineByte, 0, Math.min(nonce.length, 12));
         combineByte[12] = (byte)(counter >> 24);
