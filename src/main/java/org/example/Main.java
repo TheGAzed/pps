@@ -15,7 +15,7 @@ import java.nio.ByteBuffer;
 import java.security.SecureRandom;
 
 public class Main {
-    private final int THREAD_COUNT = 16;
+    private final int THREAD_COUNT = 2;
     private final int CEILING = THREAD_COUNT * CipherThread.BYTES;
     private static final String FILEPATH = "src/main/resources";
 
@@ -28,7 +28,7 @@ public class Main {
 
     void main() throws Exception {
         parallel();
-        sequential();
+        //sequential();
     }
 
     void sequential() throws Exception {
@@ -63,9 +63,7 @@ public class Main {
                 FileOutputStream encryptStream = new FileOutputStream(encryptFile);
                 FileOutputStream decryptStream = new FileOutputStream(decryptFile)
         ) {
-            for (int i = 0; i < THREAD_COUNT; i++) {
-                inputStream.readNBytes(inputBuffer[i].array(), 0, inputBuffer[i].array().length);
-            }
+            inputStream.readNBytes(inputBuffer[0].array(), 0, inputBuffer[0].array().length);
 
             this.encryptSequence(ceil);
             encryptStream.write(encryptBuffer[0].array(), 0, length);
