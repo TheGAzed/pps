@@ -37,9 +37,23 @@ public class CipherSequence {
         if (one.length != two.length) { throw new IllegalArgumentException(); }
 
         byte[] result = new byte[BYTES];
-        for (int i = 0; i < one.length; i++) {
-            result[i] = (byte) (one[i] ^ two[i]);
-        }
+        /*result[0] = (byte) (one[0] ^ two[0]);
+        result[1] = (byte) (one[1] ^ two[1]);
+        result[2] = (byte) (one[2] ^ two[2]);
+        result[3] = (byte) (one[3] ^ two[3]);
+        result[4] = (byte) (one[4] ^ two[4]);
+        result[5] = (byte) (one[5] ^ two[5]);
+        result[6] = (byte) (one[6] ^ two[6]);
+        result[7] = (byte) (one[7] ^ two[7]);
+        result[8] = (byte) (one[8] ^ two[8]);
+        result[9] = (byte) (one[9] ^ two[9]);
+        result[10] = (byte) (one[10] ^ two[10]);
+        result[11] = (byte) (one[11] ^ two[11]);
+        result[12] = (byte) (one[12] ^ two[12]);
+        result[13] = (byte) (one[13] ^ two[13]);
+        result[14] = (byte) (one[14] ^ two[14]);
+        result[15] = (byte) (one[15] ^ two[15]);*/
+        for (int i = 0; i < BYTES; i++) { result[i] = (byte) (one[i] ^ two[i]); }
 
         return result;
     }
